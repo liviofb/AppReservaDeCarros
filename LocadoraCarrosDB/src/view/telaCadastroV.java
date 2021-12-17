@@ -4,21 +4,67 @@
  */
 package view;
 
-import model.bean.Veiculo;
+import java.sql.SQLException;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import model.dao.VeiculoDAO;
-
+import java.sql.*;
+import javax.swing.JOptionPane;
+import model.bean.Veiculo;
 /**
  *
  * @author livio
  */
 public class telaCadastroV extends javax.swing.JFrame {
-
     /**
      * Creates new form telaCadastroV
      */
     public telaCadastroV() {
         initComponents();
+        DefaultTableModel modelo = (DefaultTableModel) jtVeiculo.getModel();
+        jtVeiculo.setRowSorter(new TableRowSorter(modelo));
+        restaurarDadosCBX();
+        readjtVeiculo();      
     }
+    
+    public void readjtVeiculo(){
+        DefaultTableModel modelo = (DefaultTableModel) jtVeiculo.getModel();
+        modelo.setNumRows(0);   
+        VeiculoDAO vdao = new VeiculoDAO();
+        
+        for(Veiculo v: vdao.read()){
+            modelo.addRow(new Object[]{
+               v.getId(),
+               v.getPlaca(),
+               v.getCor(),
+               v.getValor_dia(),
+               v.getModelo(),
+               v.getAno(),
+               v.getKm(),
+               v.getCombustivel(),
+               v.getCodAgencia(),                     
+            });
+        }
+    }
+    
+    Vector<Integer> idAgencia = new Vector<Integer>();
+    public void restaurarDadosCBX(){
+        
+        try {
+             VeiculoDAO objAgencia = new VeiculoDAO();
+             ResultSet rs = objAgencia.listarAgencia();
+             
+             while (rs.next()){
+                 idAgencia.addElement(rs.getInt(1));
+                 cbxAgencia.addItem(rs.getString(1));
+             }
+             
+        } catch (SQLException ex){
+            JOptionPane.showMessageDialog(null, "Carregar cargo view: " + ex);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -36,16 +82,20 @@ public class telaCadastroV extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
         txtPlaca = new javax.swing.JTextField();
         txtCor = new javax.swing.JTextField();
         txtValorDia = new javax.swing.JTextField();
         txtModelo = new javax.swing.JTextField();
-        txtAno = new javax.swing.JTextField();
         txtKm = new javax.swing.JTextField();
         txtCombustivel = new javax.swing.JTextField();
         jBCadastrar = new javax.swing.JButton();
-        jcAgencia = new javax.swing.JComboBox<>();
+        txtAno = new javax.swing.JFormattedTextField();
+        jBAtualizar = new javax.swing.JButton();
+        jBExcluir = new javax.swing.JButton();
+        txtPesquisa = new javax.swing.JTextField();
+        jBPesquisar = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        cbxAgencia = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtVeiculo = new javax.swing.JTable();
 
@@ -65,8 +115,6 @@ public class telaCadastroV extends javax.swing.JFrame {
 
         jLabel7.setText("Combustível");
 
-        jLabel8.setText("Agencia");
-
         txtPlaca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPlacaActionPerformed(evt);
@@ -80,13 +128,28 @@ public class telaCadastroV extends javax.swing.JFrame {
             }
         });
 
-        jcAgencia.setMaximumRowCount(3);
-        jcAgencia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Agência 1", "Agência 2", "Agência 3" }));
-        jcAgencia.addActionListener(new java.awt.event.ActionListener() {
+        jBAtualizar.setText("Atualizar");
+        jBAtualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcAgenciaActionPerformed(evt);
+                jBAtualizarActionPerformed(evt);
             }
         });
+
+        jBExcluir.setText("Excluir");
+        jBExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBExcluirActionPerformed(evt);
+            }
+        });
+
+        jBPesquisar.setText("Buscar");
+        jBPesquisar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBPesquisarActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Agência");
 
         javax.swing.GroupLayout jPainelDeDadosLayout = new javax.swing.GroupLayout(jPainelDeDados);
         jPainelDeDados.setLayout(jPainelDeDadosLayout);
@@ -94,40 +157,55 @@ public class telaCadastroV extends javax.swing.JFrame {
             jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPainelDeDadosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPainelDeDadosLayout.createSequentialGroup()
-                        .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel7)
-                            .addComponent(txtCombustivel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPainelDeDadosLayout.createSequentialGroup()
+                .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPainelDeDadosLayout.createSequentialGroup()
                         .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtCor)
                             .addComponent(txtValorDia, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addGroup(jPainelDeDadosLayout.createSequentialGroup()
-                                .addComponent(txtKm, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(135, 135, 135)
-                                .addComponent(jBCadastrar))
-                            .addGroup(jPainelDeDadosLayout.createSequentialGroup()
-                                .addComponent(txtAno, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jcAgencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPainelDeDadosLayout.createSequentialGroup()
+                            .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(txtAno)
+                                .addComponent(txtKm, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
+                            .addComponent(jLabel4)))
+                    .addGroup(jPainelDeDadosLayout.createSequentialGroup()
+                        .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addGroup(jPainelDeDadosLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(190, 190, 190)
                         .addComponent(jLabel6)))
-                .addGap(29, 215, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPainelDeDadosLayout.createSequentialGroup()
+                        .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCombustivel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPainelDeDadosLayout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(0, 48, Short.MAX_VALUE))
+                            .addComponent(cbxAgencia, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPainelDeDadosLayout.createSequentialGroup()
+                        .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPainelDeDadosLayout.createSequentialGroup()
+                                .addComponent(txtPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPainelDeDadosLayout.createSequentialGroup()
+                                .addComponent(jBCadastrar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jBAtualizar)
+                                .addGap(23, 23, 23)))
+                        .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jBExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
+                            .addComponent(jBPesquisar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         jPainelDeDadosLayout.setVerticalGroup(
             jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,22 +214,23 @@ public class telaCadastroV extends javax.swing.JFrame {
                 .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel6)
-                    .addComponent(jLabel7))
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8))
                 .addGap(5, 5, 5)
                 .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCombustivel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(txtCombustivel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxAgencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jcAgencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jBPesquisar))
                 .addGap(5, 5, 5)
                 .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -160,8 +239,10 @@ public class telaCadastroV extends javax.swing.JFrame {
                 .addGroup(jPainelDeDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtValorDia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtKm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jBCadastrar))
-                .addContainerGap(36, Short.MAX_VALUE))
+                    .addComponent(jBCadastrar)
+                    .addComponent(jBAtualizar)
+                    .addComponent(jBExcluir))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         jtVeiculo.setModel(new javax.swing.table.DefaultTableModel(
@@ -169,15 +250,20 @@ public class telaCadastroV extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Placa", "Cor", "Valor da Diária", "Modelo", "Ano", "Km", "Combustível", "Local de Retirada"
+                "ID", "Placa", "Cor", "Valor da Diária", "Modelo", "Ano", "Km", "Combustível", "Agência"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        jtVeiculo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtVeiculoMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(jtVeiculo);
@@ -196,7 +282,7 @@ public class telaCadastroV extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPainelDeDados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -210,6 +296,52 @@ public class telaCadastroV extends javax.swing.JFrame {
 
     private void jBCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCadastrarActionPerformed
         // TODO add your handling code here:
+        Veiculo v = new Veiculo();     
+        VeiculoDAO dao = new VeiculoDAO();
+
+        v.setPlaca(txtPlaca.getText());
+        v.setModelo(txtModelo.getText());
+        v.setCor(txtCor.getText());
+        v.setAno(txtAno.getText());
+        v.setValor_dia(Float.parseFloat(txtValorDia.getText()));
+        v.setKm(Integer.parseInt(txtKm.getText()));
+        v.setCombustivel(txtCombustivel.getText());
+        
+        int codAgencia;
+        codAgencia = idAgencia.get(cbxAgencia.getSelectedIndex());
+        v.setCodAgencia(codAgencia);
+        
+        dao.create(v);
+        txtPlaca.setText("");
+        txtAno.setText("");
+        txtCombustivel.setText("");
+        txtCor.setText("");
+        txtKm.setText("");
+        txtModelo.setText("");
+        txtValorDia.setText("");
+         readjtVeiculo();       
+    }//GEN-LAST:event_jBCadastrarActionPerformed
+
+    private void jtVeiculoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtVeiculoMouseClicked
+        // TODO add your handling code here:
+        
+        if(jtVeiculo.getSelectedRow() != -1){
+            txtPlaca.setText(jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),1).toString());
+            txtCor.setText(jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),2).toString());
+            txtValorDia.setText(jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),3).toString());
+            txtModelo.setText(jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),4).toString());
+            txtAno.setText(jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),5).toString());
+            txtKm.setText(jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),6).toString());
+            txtCombustivel.setText(jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),7).toString());
+            jtVeiculo.getValueAt(cbxAgencia.getSelectedIndex(), 8);
+            
+            
+        }
+    }//GEN-LAST:event_jtVeiculoMouseClicked
+
+    private void jBAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBAtualizarActionPerformed
+        // TODO add your handling code here:
+        
         Veiculo v = new Veiculo();
         VeiculoDAO dao = new VeiculoDAO();
         v.setPlaca(txtPlaca.getText());
@@ -219,15 +351,70 @@ public class telaCadastroV extends javax.swing.JFrame {
         v.setValor_dia(Float.parseFloat(txtValorDia.getText()));
         v.setKm(Integer.parseInt(txtKm.getText()));
         v.setCombustivel(txtCombustivel.getText());
+        v.setId((int)jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),0));
         
-        dao.create(v);
+        int codAgencia;
+        codAgencia = idAgencia.get(cbxAgencia.getSelectedIndex());
+        v.setCodAgencia(codAgencia);
         
+        dao.update(v);
+        txtPlaca.setText("");
+        txtAno.setText("");
+        txtCombustivel.setText("");
+        txtCor.setText("");
+        txtKm.setText("");
+        txtModelo.setText("");
+        txtValorDia.setText("");
         
-    }//GEN-LAST:event_jBCadastrarActionPerformed
+        readjtVeiculo();
+    }//GEN-LAST:event_jBAtualizarActionPerformed
 
-    private void jcAgenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcAgenciaActionPerformed
+    private void jBExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBExcluirActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jcAgenciaActionPerformed
+        
+        if (jtVeiculo.getSelectedRow() != -1){
+            Veiculo v = new Veiculo();
+        VeiculoDAO dao = new VeiculoDAO();
+        
+        v.setId((int)jtVeiculo.getValueAt(jtVeiculo.getSelectedRow(),0));
+        
+        dao.remove(v);
+        txtPlaca.setText("");
+        txtAno.setText("");
+        txtCombustivel.setText("");
+        txtCor.setText("");
+        txtKm.setText("");
+        txtModelo.setText("");
+        txtValorDia.setText("");
+        
+        readjtVeiculo();
+        } else{
+            JOptionPane.showMessageDialog(null, "Selecione um veiculo para excluir");
+        }
+        
+    }//GEN-LAST:event_jBExcluirActionPerformed
+    
+    public void buscjTBusca(String busc){    
+        DefaultTableModel modelo = (DefaultTableModel) jtVeiculo.getModel();
+        modelo.setNumRows(0);   
+        VeiculoDAO vdao = new VeiculoDAO();
+        
+        for(Veiculo v: vdao.buscaB(busc)){
+            modelo.addRow(new Object[]{
+               v.getId(),
+               v.getPlaca(),
+               v.getCor(),
+               v.getValor_dia(),
+               v.getModelo(),
+               v.getAno(),
+               v.getKm(),
+               v.getCombustivel(),       
+            });
+      } }
+    private void jBPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBPesquisarActionPerformed
+        // TODO add your handling code here:}
+        buscjTBusca(txtPesquisa.getText());
+    }//GEN-LAST:event_jBPesquisarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -265,7 +452,11 @@ public class telaCadastroV extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cbxAgencia;
+    private javax.swing.JButton jBAtualizar;
     private javax.swing.JButton jBCadastrar;
+    private javax.swing.JButton jBExcluir;
+    private javax.swing.JButton jBPesquisar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -276,13 +467,13 @@ public class telaCadastroV extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPainelDeDados;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox<String> jcAgencia;
     private javax.swing.JTable jtVeiculo;
-    private javax.swing.JTextField txtAno;
+    private javax.swing.JFormattedTextField txtAno;
     private javax.swing.JTextField txtCombustivel;
     private javax.swing.JTextField txtCor;
     private javax.swing.JTextField txtKm;
     private javax.swing.JTextField txtModelo;
+    private javax.swing.JTextField txtPesquisa;
     private javax.swing.JTextField txtPlaca;
     private javax.swing.JTextField txtValorDia;
     // End of variables declaration//GEN-END:variables
