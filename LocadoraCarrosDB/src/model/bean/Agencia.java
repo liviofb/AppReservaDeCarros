@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model.bean;
-
+import model.bean.Veiculo;
 /**
  *
  * @author livio
@@ -16,6 +16,17 @@ public class Agencia {
     private String uf;
     private String email;
     private String celular;
+    
+// o código abaixo referencia a classe bean veiculo
+//    private Veiculo agIdVeiculo;
+//
+//    public Veiculo getAgIdVeiculo() {
+//        return agIdVeiculo;
+//    }
+//
+//    public void setAgIdVeiculo(Veiculo agIdVeiculo) {
+//        this.agIdVeiculo = agIdVeiculo;
+//  }
 
     public int getIdAgencia() {
         return idAgencia;

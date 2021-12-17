@@ -11,7 +11,43 @@ package model.bean;
 public class Reserva {
     private int idReserva;
     private String dataRetirada;
+    private String dataEntrega;
     private float valor;
+    private int codAgencia;
+    private String nomeCliente;
+    private int codVeiculo;
+
+    public int getCodAgencia() {
+        return codAgencia;
+    }
+
+    public void setCodAgencia(int codAgencia) {
+        this.codAgencia = codAgencia;
+    }
+
+    public String getNomeCliente() {
+        return nomeCliente;
+    }
+
+    public void setNomeCliente(String nomeCliente) {
+        this.nomeCliente = nomeCliente;
+    }
+
+    public int getCodVeiculo() {
+        return codVeiculo;
+    }
+
+    public void setCodVeiculo(int codVeiculo) {
+        this.codVeiculo = codVeiculo;
+    }
+
+    public String getDataEntrega() {
+        return dataEntrega;
+    }
+
+    public void setDataEntrega(String dataEntrega) {
+        this.dataEntrega = dataEntrega;
+    }
 
     public int getIdReserva() {
         return idReserva;

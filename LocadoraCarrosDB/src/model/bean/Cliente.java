@@ -9,8 +9,10 @@ package model.bean;
  * @author livio
  */
 public class Cliente {
-    
+   
     private int idCliente;
+
+    
     private String nomeCliente;
     private String cpf;
     private String email;
@@ -19,7 +21,8 @@ public class Cliente {
     private String cidade;
     private String uf;
     private String cep;
-
+    private String telefone;
+    
     public int getIdCliente() {
         return idCliente;
     }
@@ -27,7 +30,7 @@ public class Cliente {
     public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
     }
-
+    
     public String getNomeCliente() {
         return nomeCliente;
     }
@@ -98,7 +101,5 @@ public class Cliente {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-    private String telefone;
-    
+    }    
 }

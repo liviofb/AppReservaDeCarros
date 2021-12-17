@@ -17,6 +17,24 @@ public class Veiculo {
     private float valor_dia;
     private int km;
     private String combustivel;
+    private int codAgencia;
+
+    public int getCodAgencia() {
+        return codAgencia;
+    }
+
+    public void setCodAgencia(int codAgencia) {
+        this.codAgencia = codAgencia;
+    }
+    private Agencia agencia;
+
+    public Agencia getAgencia() {
+        return agencia;
+    }
+
+    public void setAgencia(Agencia agencia) {
+        this.agencia = agencia;
+    }
 
     public int getId() {
         return id;
